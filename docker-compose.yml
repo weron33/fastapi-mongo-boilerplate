@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  mongodb:
+    container_name: app-db
+    image: mongo:6.0.1
+    ports:
+    - '27017:27017'
+    volumes:
+    - dbdata:/data/db
+
+  api-mongo:
+    container_name: api-mongo
+    build:
+      context: src
+      dockerfile: ./Dockerfile
+    ports:
+      - "5052:5052"
+    restart: always
+
+volumes:
+  dbdata:
