@@ -5,7 +5,7 @@ from src.controllers import collection_controller
 router = APIRouter()
 
 
-@router.get('/api/{database}/{collection}')
+@router.get('/api/{database}/{collection}/{docId}')
 async def _get_document(database, collection, **kwargs):
     return collection_controller.get_docs(database=database, collection=collection, **kwargs)
 
@@ -30,8 +30,8 @@ async def _delete_document(database, collection, **kwargs):
 
 
 @router.get('/api/{database}/{collection}')
-async def _get_all_documents(database, collection, **kwargs):
-    return collection_controller.get_all_docs(database=database, collection=collection, **kwargs)
+async def _get_all_documents(database, collection):
+    return collection_controller.get_all_docs(database=database, collection=collection)
 
 
 @router.post('/api/{database}/{collection}')

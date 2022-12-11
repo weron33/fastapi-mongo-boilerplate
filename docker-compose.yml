@@ -12,11 +12,13 @@ services:
   api-mongo:
     container_name: api-mongo
     build:
-      context: src
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./src/Dockerfile
     ports:
       - "5052:5052"
     restart: always
+    environment:
+      API_ENV: docker
 
 volumes:
   dbdata:

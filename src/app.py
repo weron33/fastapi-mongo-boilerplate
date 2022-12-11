@@ -1,4 +1,3 @@
-import json
 import os
 import importlib
 import sys
@@ -18,8 +17,12 @@ def include_routers(dirname):
             full_package_dir = f'{dirname}/{package_name}'
             full_package_name = full_package_dir[:-3].replace('/', '.')
             if full_package_name not in sys.modules:
-                route = importlib.import_module(full_package_name)
-                app.include_router(route.router)
+                try:
+                    route = importlib.import_module(full_package_name)
+                    app.include_router(route.router)
+                    print('Router included')
+                except ModuleNotFoundError:
+                    pass
 
 
 def custom_openapi():

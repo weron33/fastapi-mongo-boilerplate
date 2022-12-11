@@ -1,5 +1,4 @@
-from flask import current_app, request
-
+from src.configs.config import settings
 from src.models.collection_model import MongoCollection
 from src.services.utils.set_db import choose_database
 from src.services.utils.verification_util import remove_duplicates_from_intput
@@ -49,6 +48,6 @@ def aggregate_docs(query: dict or list, **kwargs):
 
 
 def _get_collection(**kwargs) -> MongoCollection and dict:
-    customer_db_code = choose_database(kwargs.pop('customer_db_code') if 'customer_db_code' in kwargs else None)
-    return current_app.config[customer_db_code][request.blueprint], kwargs
+    database = choose_database(kwargs.pop('database') if 'database' in kwargs else None)
+    return settings.MONGO_DATABASES[database][kwargs['collection']], kwargs
 

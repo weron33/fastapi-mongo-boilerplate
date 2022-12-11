@@ -1,7 +1,11 @@
 FROM python:slim-buster
-WORKDIR /app/src
+
+WORKDIR .
+COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+WORKDIR /app
 COPY . .
-RUN pip install -r requirements.txt
 ENV FLASK_APP=src/app.py
 ENV PYTHONPATH="/app:${PYTHONPATH}"
 

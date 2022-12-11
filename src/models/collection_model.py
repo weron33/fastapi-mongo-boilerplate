@@ -28,16 +28,18 @@ class MongoCollection:
         self.database_name = database_name
         self.db = self.client[migration_database] if migration_database else self.client[self.database_name]
         self.name = collection_name
+        self.collection = self.db[self.name]
         self.name_arch = f"{self.name}{self.ARCHIVE_SUFFIX}"
         collections = self.db.list_collection_names()
 
         # Current database state
         if self.name not in collections:
             # Creates collection of current state using validator stored in ./src/validators/
-            with open(f"{self.validators_path}/{self.name}{self.VALIDATOR_FILE_SUFFIX}", 'r') as validator:
-                self.collection = self.db.create_collection(self.name, validator=json.load(validator))
-                if verbose:
-                    print(f'Collection \'{self.name}\' in database \'{self.db.name}\' created successfully!')
+            if os.path.exists(f"{self.validators_path}/{self.name}{self.VALIDATOR_FILE_SUFFIX}"):
+                with open(f"{self.validators_path}/{self.name}{self.VALIDATOR_FILE_SUFFIX}", 'r') as validator:
+                    self.collection = self.db.create_collection(self.name, validator=json.load(validator))
+                    if verbose:
+                        print(f'Collection \'{self.name}\' in database \'{self.db.name}\' created successfully!')
             self._initialize_data()
         else:
             # This case applies if collection already exists, so validator will be updated (in case of any changes)
@@ -65,7 +67,7 @@ class MongoCollection:
                 print(f'Collection \'{self.name_arch}\' in database \'{self.db.name}\' already created')
 
     def _initialize_data(self):
-        data_path = f"{self.init_path}/{self.database_name}/{self.collection.name}{self.INIT_SUFFIX}"
+        data_path = f"{self.init_path}/{self.database_name}/{self.name}{self.INIT_SUFFIX}"
         if os.path.exists(data_path):
             with open(data_path) as data:
                 self.collection.insert_many(json.load(data))
