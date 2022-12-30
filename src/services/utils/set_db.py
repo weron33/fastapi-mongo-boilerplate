@@ -1,8 +1,6 @@
 import json
 import os
 
-from flask import current_app
-
 from src.configs.config import settings
 from src.models.collection_model import MongoCollection
 from src.models.database_model import MongoDatabase

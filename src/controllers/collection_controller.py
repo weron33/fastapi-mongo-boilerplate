@@ -39,13 +39,17 @@ def post_doc(docs: list or dict, **kwargs) -> dict:
 
 
 def delete_docs(**kwargs) -> dict:
-    try:
-        collection_service.delete_doc(**kwargs)
-        msg = 'Success'
-        code = HTTPStatus.OK
-    except FileNotFoundError:
-        msg = 'Doc does not exist'
-        code = HTTPStatus.NOT_FOUND
+    if not kwargs:
+        msg = 'This request would clear the very whole collection'
+        code = HTTPStatus.NOT_MODIFIED
+    else:
+        try:
+            collection_service.delete_doc(**kwargs)
+            msg = 'Success'
+            code = HTTPStatus.OK
+        except FileNotFoundError:
+            msg = 'Doc does not exist'
+            code = HTTPStatus.NOT_FOUND
     result = {
         'code': code,
         'msg': msg,
@@ -68,8 +72,8 @@ def update_doc(doc_obj: dict, **kwargs) -> dict:
     return result
 
 
-def get_all_docs(**kwargs) -> dict:
-    docs = collection_service.get_all_docs(**kwargs)
+def get_many_docs(**kwargs) -> dict:
+    docs = collection_service.get_many_docs(**kwargs)
     docs = list(docs)
     if docs is None or docs == []:
         msg = 'Docs are confused'

@@ -28,10 +28,9 @@ def update_doc(doc_obj: dict, **kwargs):
     return result
 
 
-def get_all_docs(**kwargs):
+def get_many_docs(**kwargs):
     collection, kwargs = _get_collection(**kwargs)
-    query = {}
-    result = collection.find(query)
+    result = collection.find(kwargs)
     return result
 
 
@@ -49,5 +48,5 @@ def aggregate_docs(query: dict or list, **kwargs):
 
 def _get_collection(**kwargs) -> MongoCollection and dict:
     database = choose_database(kwargs.pop('database') if 'database' in kwargs else None)
-    return settings.MONGO_DATABASES[database][kwargs['collection']], kwargs
+    return settings.MONGO_DATABASES[database][kwargs.pop('collection')], kwargs
 
