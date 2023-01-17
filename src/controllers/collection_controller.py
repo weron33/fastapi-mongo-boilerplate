@@ -1,140 +1,68 @@
 from http import HTTPStatus
 
+from src.schemas.responses import SuccessResponse, NotFoundResponse, ConflictResponse, CreatedResponse, \
+    NotModifiedResponse
 from src.services import collection_service
 
 
-def get_docs(**kwargs) -> dict:
+def get_docs(**kwargs) -> NotFoundResponse or SuccessResponse:
     docs = collection_service.get_doc(**kwargs)
     docs = list(docs)
     if docs is None or docs == []:
-        msg = 'Doc does not exist'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
+        response = NotFoundResponse()
     else:
-        msg = 'Success'
-        code = HTTPStatus.OK
-    result = {
-        'code': code,
-        'msg': msg,
-        'data': docs
-    }
-    return result
+        response = SuccessResponse(docs)
+    return response
 
 
-def post_doc(docs: list or dict, **kwargs) -> dict:
-    if type(docs) is dict:
-        docs = [docs]
+def post_doc(docs: list, **kwargs) -> CreatedResponse or ConflictResponse:
     try:
         collection_service.post_doc(docs, **kwargs)
-        msg = 'Success'
-        code = HTTPStatus.CREATED
+        response = CreatedResponse()
     except FileExistsError:
-        msg = 'Docs/Doc already exist/s'
-        code = HTTPStatus.CONFLICT
-    result = {
-        'code': code,
-        'msg': msg,
-    }
-    return result
+        response = ConflictResponse()
+    return response
 
 
-def delete_docs(**kwargs) -> dict:
+def delete_docs(**kwargs) -> SuccessResponse or NotFoundResponse or NotModifiedResponse:
     if not kwargs:
-        msg = 'This request would clear the very whole collection'
-        code = HTTPStatus.NOT_MODIFIED
+        response = NotModifiedResponse()
     else:
         try:
             collection_service.delete_doc(**kwargs)
-            msg = 'Success'
-            code = HTTPStatus.OK
+            response = SuccessResponse(items=[])
         except FileNotFoundError:
-            msg = 'Doc does not exist'
-            code = HTTPStatus.NOT_FOUND
-    result = {
-        'code': code,
-        'msg': msg,
-    }
-    return result
+            response = NotFoundResponse()
+    return response
 
 
-def update_doc(doc_obj: dict, **kwargs) -> dict:
+def update_doc(doc_obj: dict, **kwargs) -> SuccessResponse or NotFoundResponse:
     try:
         collection_service.update_doc(doc_obj, **kwargs)
-        msg = 'Success'
-        code = HTTPStatus.OK
+        response = SuccessResponse(items=[])
     except FileNotFoundError:
-        msg = 'Doc does not exist'
-        code = HTTPStatus.NOT_FOUND
-    result = {
-        'code': code,
-        'msg': msg,
-    }
-    return result
+        response = NotFoundResponse()
+    return response
 
 
-def get_many_docs(**kwargs) -> dict:
+def get_many_docs(**kwargs) -> SuccessResponse or NotFoundResponse:
     docs = collection_service.get_many_docs(**kwargs)
     docs = list(docs)
     if docs is None or docs == []:
-        msg = 'Docs are confused'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
+        response = NotFoundResponse()
     else:
-        msg = 'Success'
-        code = HTTPStatus.OK
-    result = {
-        'code': code,
-        'msg': msg,
-        'data': docs
-    }
-    return result
+        response = SuccessResponse(items=docs)
+    return response
 
 
-def query_docs(query: dict or list, **kwargs) -> dict:
+def query_docs(query: dict or list, **kwargs) -> SuccessResponse or NotFoundResponse:
     docs = collection_service.query_docs(query, **kwargs)
     docs = list(docs)
     if docs is None or docs == []:
-        msg = 'Docs are confused'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
+        response = NotFoundResponse()
     else:
-        msg = 'Success'
-        code = HTTPStatus.OK
         for doc in docs:
             if '_id' in doc:
                 doc['_id'] = str(doc['_id'])
-    result = {
-        'code': code,
-        'msg': msg,
-        'data': docs
-    }
-    return result
-
-
-def aggregate_docs(query: dict or list, **kwargs) -> dict:
-    docs = collection_service.aggregate_docs(query, **kwargs)
-    docs = list(docs)
-    if docs is None:
-        msg = 'Docs are confused'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
-    elif docs == [] and kwargs['postal_code'] is None:
-        msg = 'Country is divided on several zones. Please pass postal code to specify the zone'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
-    elif docs == [] and kwargs['postal_code'] is not None:
-        msg = 'Whole country belongs to certain zone. Please send request without postal code'
-        code = HTTPStatus.NOT_FOUND
-        docs = []
-    else:
-        msg = 'Success'
-        code = HTTPStatus.OK
-        for doc in docs:
-            doc['_id'] = str(doc['_id'])
-            del doc['Zones']
-    result = {
-        'code': code,
-        'msg': msg,
-        'data': docs
-    }
-    return result
+            response = SuccessResponse
+    return response

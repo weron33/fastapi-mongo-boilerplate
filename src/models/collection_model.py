@@ -80,10 +80,6 @@ class MongoCollection:
         pass
 
     def create(self, docList):
-        # TODO: Ogarnąć to ładniej, bo to jest brzydko
-        exists = [self.collection.find_one(docObj, {'_id': False}) for docObj in docList
-                  if self.collection.find_one(docObj, {'_id': False})]
-        docList = [dict(doc, **{'version': 1}) for doc in docList if doc not in exists]
         if docList:
             self.collection.insert_many(docList)
             self._move_to_arch(docList)
