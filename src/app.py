@@ -29,7 +29,7 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="FastAPI - MongoDB",
+        title="FastAPI - MongoDB Boilerplate",
         version="1.0.0",
         description="This is a very custom OpenAPI schema",
         routes=app.routes,
@@ -41,8 +41,8 @@ def custom_openapi():
     return app.openapi_schema
 
 
-app.openapi = custom_openapi
 include_routers('src/routes')
+app.openapi = custom_openapi
 
 if __name__ == "__main__":
     uvicorn.run(app, host=settings.API_HOST, port=settings.API_PORT)
