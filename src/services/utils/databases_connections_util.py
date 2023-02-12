@@ -6,8 +6,8 @@ from src.models.collection_model import MongoCollection
 from src.models.database_model import MongoDatabase
 
 
-def choose_database(database_name: str = None) -> str:
-    return settings.connect_database(database_name)
+def choose_database(database_name: str = None, **kwargs) -> str:
+    return settings.connect_database(database_name, **kwargs)
 
 
 # def connect_database(database_name: str) -> str:
