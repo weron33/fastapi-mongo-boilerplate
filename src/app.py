@@ -20,7 +20,7 @@ def include_routers(dirname):
                 try:
                     route = importlib.import_module(full_package_name)
                     app.include_router(route.router)
-                    print('Router included')
+                    print(f'Router included: {route}')
                 except ModuleNotFoundError:
                     pass
 
@@ -29,7 +29,7 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="FastAPI - MongoDB Boilerplate",
+        title="FastAPI - MongoDB - Boilerplate",
         version="1.0.0",
         description="This is a very custom OpenAPI schema",
         routes=app.routes,

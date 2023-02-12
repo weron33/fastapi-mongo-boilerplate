@@ -1,7 +1,7 @@
 import json
 import os
 
-from src.models.collection_model import settings
+from src.configs.config import settings
 
 
 def dump_collection(collection, date):

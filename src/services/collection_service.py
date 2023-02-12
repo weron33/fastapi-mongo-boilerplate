@@ -1,6 +1,6 @@
 from src.configs.config import settings
 from src.models.collection_model import MongoCollection
-from src.services.utils.set_db import choose_database
+from src.services.utils.databases_connections_util import choose_database
 from src.services.utils.verification_util import remove_duplicates_from_intput
 
 

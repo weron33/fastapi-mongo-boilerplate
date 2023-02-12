@@ -1,29 +1,18 @@
 from http import HTTPStatus
 
+from src.schemas.responses import CreatedResponse, ConflictResponse
 from src.services import admin_service
 
 
-def migrate_database_controller(collections: list, migrate_to: str, **kwargs) -> dict and HTTPStatus:
-    customer_db_code = kwargs.pop('customer_db_code')
-    migration_status = admin_service.migrate_service(collection_names=collections,
-                                                     migrate_to=migrate_to,
-                                                     customer_db_code=customer_db_code)
+def migrate_database_controller(from_database: str, to_database: str, collections: list) -> CreatedResponse:
+    migration_status = admin_service.migrate_service(from_database=from_database,
+                                                     to_database=to_database,
+                                                     collection_names=collections)
     if any(migration_status.values()):
-        code = HTTPStatus.CREATED
-        result = {
-            'msg': code.phrase,
-            'data': migration_status,
-            'code': code
-        }
+        response = CreatedResponse()
     else:
-        code = HTTPStatus.CONFLICT
-        result = {
-            'msg': 'All collections in target database contains the same data as main database.'
-                   'Migration isn\'t necessary.',
-            'data': migration_status,
-            'code': code
-        }
-    return result, code
+        response = ConflictResponse()
+    return response
 
 
 def dump_collections_controller(collections: list, **kwargs) -> dict and HTTPStatus:

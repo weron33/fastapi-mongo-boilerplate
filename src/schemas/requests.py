@@ -11,3 +11,7 @@ class PutRequestBody(BaseModel):
 
 class QueryRequestBody(BaseModel):
     query: dict
+
+
+class MigrateRequestBody(BaseModel):
+    collections: list

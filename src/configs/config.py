@@ -38,17 +38,19 @@ class Config:
         for database_name in databases_names:
             self.connect_database(database_name)
 
-    def connect_database(self, database_name: str) -> str:
+    def connect_database(self, database_name: str, migrate_collections: list = None) -> str:
         if database_name not in self.MONGO_DATABASES:  # Database is not connected (maybe exists, maybe not)
-            collections_dict = self._split_collections(database_name)
+            collections_dict = self._split_collections(database_name, migrate_collections)
             self._create_database(database_name, collections_dict)
         return database_name
 
-    def _split_collections(self, database_name: str) -> dict:
+    def _split_collections(self, database_name: str, migrate_collections: list = None) -> dict:
+        if migrate_collections is None:
+            migrate_collections = []
         collections_names = MongoDatabase(self.MONGO_CONNECTION, database_name, self.ARCHIVE_SUFFIX).collections_names
         required = self._load_required_collection_names(database_name)
         additional = list(sorted(set(collections_names) - set(required)))
-        missing = list(sorted(set(required) - set(collections_names)))
+        missing = list(sorted(set(required) - set(collections_names))) + migrate_collections
         return {'required': required, 'missing': missing, 'additional': additional}
 
     def _load_required_collection_names(self, database_name) -> list:
