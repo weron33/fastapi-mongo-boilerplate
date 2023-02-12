@@ -28,13 +28,16 @@ def migrate_service(from_database: str, to_database: str, collection_names: list
     return migration_status
 
 
-def dump_service(collection_names: list, database_name=None) -> None:
+def dump_service(collection_names: list, database_name=None) -> dict:
     date_format = "%Y-%m-%d-%H-%M-%S"
     init_date = datetime.now().strftime(date_format)
     customer_db_code = choose_database(database_name=database_name)
+    backup_dict = {}
     for collection_name in collection_names:
         collection = settings.MONGO_DATABASES[customer_db_code][collection_name]
-        _ = dump_collection(collection, init_date)
+        backup_path = dump_collection(collection, init_date)
+        backup_dict[collection_name] = backup_path
+    return backup_dict
 
 
 def create_database_service(database_name: str = None) -> str:

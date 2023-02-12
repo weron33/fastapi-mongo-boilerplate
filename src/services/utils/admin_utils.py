@@ -32,4 +32,4 @@ def dump_collection(collection, date):
 
     with open(f'{backups_path}/{collection.collection_arch.name}.json', 'w') as f:
         f.write(json_object_arch)
-    return data
+    return backups_path

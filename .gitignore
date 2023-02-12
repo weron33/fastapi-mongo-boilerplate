@@ -1,3 +1,6 @@
+# Some files created by API, such as backups and so...
+src/configs/dumps/backups
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

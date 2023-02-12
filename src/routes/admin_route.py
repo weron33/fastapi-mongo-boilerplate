@@ -9,17 +9,18 @@ router = APIRouter(tags=['admin'])
 
 
 @router.post('/admin/migrate')
-async def _migrate_route(fromDatabase: str, toDatabase: str, body: MigrateRequestBody) -> CreatedResponse or ConflictResponse:
+async def _migrate_route(fromDatabase: str, toDatabase: str,
+                         body: MigrateRequestBody) -> CreatedResponse or ConflictResponse:
     collections = body.collections
-    result = admin_controller.migrate_database_controller(fromDatabase, toDatabase, collections)
-    return result
+    response = admin_controller.migrate_database_controller(fromDatabase, toDatabase, collections)
+    return response
 
-# @admin.route('/mongo/admin/dump', methods=['POST'])
-# @admin.route('/mongo/<customer_db_code>/admin/dump', methods=['POST'])
-# async def _dump_route(**kwargs):
-#     collections = request.get_json()['collections']
-#     result, code = admin_controller.dump_collections_controller(collections=collections, **kwargs)
-#     return jsonify(result), code
+
+@router.post('/admin/dump/{databaseName}')
+async def _dump_route(databaseName: str, body: MigrateRequestBody):
+    collections = body.collections
+    response = admin_controller.dump_collections_controller(collections=collections, database_name=databaseName)
+    return response
 #
 #
 # @admin.route('/mongo/admin/databases/<database_type>/<database_name>', methods=['POST'])

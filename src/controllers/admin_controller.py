@@ -15,15 +15,10 @@ def migrate_database_controller(from_database: str, to_database: str, collection
     return response
 
 
-def dump_collections_controller(collections: list, **kwargs) -> dict and HTTPStatus:
-    customer_db_code = kwargs.pop('customer_db_code') if 'customer_db_code' in kwargs else None
-    admin_service.dump_service(collections, customer_db_code)
-    code = HTTPStatus.CREATED
-    result = {
-        'msg': code.phrase,
-        'code': code
-    }
-    return result, code
+def dump_collections_controller(collections: list, database_name: str) -> dict and HTTPStatus:
+    backup_path = admin_service.dump_service(collections, database_name)
+    response = CreatedResponse(backup=backup_path)
+    return response
 
 
 def create_database_controller(database_type: str, database_name: str = None) -> dict and HTTPStatus:
