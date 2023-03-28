@@ -38,10 +38,13 @@ class Config:
         for database_name in databases_names:
             self.connect_database(database_name)
 
-    def connect_database(self, database_name: str, migrate_collections: list = None) -> str:
+    def connect_database(self, database_name: str, migrate_collections: list = None, _create: bool = False) -> str:
         if database_name not in self.MONGO_DATABASES:  # Database is not connected (maybe exists, maybe not)
-            collections_dict = self._split_collections(database_name, migrate_collections)
-            self._create_database(database_name, collections_dict)
+            if _create:
+                collections_dict = self._split_collections(database_name, migrate_collections)
+                self._create_database(database_name, collections_dict)
+            else:
+                raise KeyError('Database does not exist! \nSet parameter "_create" as true in query')
         return database_name
 
     def _split_collections(self, database_name: str, migrate_collections: list = None) -> dict:

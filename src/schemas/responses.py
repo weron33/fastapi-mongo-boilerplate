@@ -35,7 +35,8 @@ class NotFoundResponse(JSONResponse):
     items: list = []
 
     def __init__(self, **kwargs):
-        kwargs['msg'] = self.msg
+        if 'msg' not in kwargs:
+            kwargs['msg'] = self.msg
         content = dict(self.__dict__, **kwargs)
         # content = jsonable_encoder(content)
         super().__init__(content, status_code=self.code)
